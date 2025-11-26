@@ -1,6 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import imageio.v2 as imageio
+from IPython.display import Image
+from tqdm import tqdm
+import os
+from datetime import datetime
+import io
 
+frames = []
 ################ Parameters ################
 Nrho = 8                     # number of phenotypes
 drho = 1.0 / Nrho            # discrete phenotypic spacing (simple Riemann sum)
@@ -13,7 +20,7 @@ D_rho = np.linspace(0.05, 0.5, Nrho)
 
 # time
 dt = 0.05
-tmax = 30.0
+tmax = 3.0
 
 ############# Initial conditions ###########
 # Spatial grid
@@ -54,7 +61,9 @@ plt.colorbar()
 ################ Time loop ################
 t = 0.0
 step = 0
-while t < tmax:
+
+print('Running simulation')
+for t in tqdm(np.arange(0, tmax, dt)):
     # Laplacian for phi
     lap_phi = (phi[sright,:] + phi[sleft,:] + phi[:,sup] + phi[:,sdown] - 4*phi)
 
@@ -99,11 +108,24 @@ while t < tmax:
     step += 1
 
     # Plot
-    if (round(t/dt)%100==0):
-        plt.figure()
-        plt.pcolor(phi, vmin=0, vmax=1)
-        plt.colorbar(ticks=[0,0.5,1])
-        plt.pause(0.001)
+    
+    if (round(t/dt)%1==0):
+        fig, ax = plt.subplots()
+        c = ax.pcolor(phi, vmin=0, vmax=1)
+        fig.colorbar(c)
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png') 
+        buf.seek(0)
+        frames.append(imageio.imread(buf))
+
+        plt.close(fig)
+
+
+# Save GIF
+os.makedirs('./results/first_model', exist_ok=True)
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+imageio.mimsave(f'results/first_model/simulation_{timestamp}.gif', frames, fps=10)
 
 plt.ioff()
-plt.show()
