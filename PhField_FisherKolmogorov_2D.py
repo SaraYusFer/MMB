@@ -1,14 +1,17 @@
+import os
+import io
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.patches as mpatches
 import imageio.v2 as imageio
 from IPython.display import Image
 from tqdm import tqdm
-import os
 from datetime import datetime
-import io
 
-frames = []
-################ Parameters ################
+
+
+################ Parameters and variables ################
 Nrho = 8                     # number of phenotypes
 drho = 1.0 / Nrho            # discrete phenotypic spacing (simple Riemann sum)
 
@@ -21,6 +24,14 @@ D_rho = np.linspace(0.05, 0.5, Nrho)
 # time
 dt = 0.05
 tmax = 3.0
+
+# helpers
+frames = []
+rho_frames = [[] for _ in range(Nrho)]
+rho_overlay_frames = []
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+colors = cm.get_cmap('tab10', Nrho)(np.arange(Nrho))[:, :3]  # Nx3 RGB
+
 
 ############# Initial conditions ###########
 # Spatial grid
@@ -110,6 +121,8 @@ for t in tqdm(np.arange(0, tmax, dt)):
     # Plot
     
     if (round(t/dt)%1==0):
+
+        # Fields (phi)
         fig, ax = plt.subplots()
         c = ax.pcolor(phi, vmin=0, vmax=1)
         fig.colorbar(c)
@@ -121,11 +134,49 @@ for t in tqdm(np.arange(0, tmax, dt)):
 
         plt.close(fig)
 
+        """ 
+        # Phenotypes (rho), individually
+        for k in range(Nrho):
+            fig, ax = plt.subplots()
+            c = ax.pcolor(u[:, :, k], vmin=0, vmax=u.max())
+            fig.colorbar(c)
 
-# Save GIF
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png')
+            buf.seek(0)
+            rho_frames[k].append(imageio.imread(buf))
+            plt.close(fig)
+        """
+
+        # Phenotyes (rho) overimposed
+        overlay = np.zeros((Lx, Ly, 3))
+
+        for k in range(Nrho):
+            channel = u[:, :, k] / (u.max() + 1e-9)  
+            rgb = colors[k]                           
+            overlay += channel[..., None] * rgb       
+
+        overlay = np.clip(overlay, 0, 1)
+
+        fig, ax = plt.subplots()
+        ax.imshow(overlay, origin='lower')
+        ax.set_title("Phenotype Overlay")
+
+        legend_patches = [mpatches.Patch(color=colors[k], label=f"rho_{k}") for k in range(Nrho)]
+        ax.legend(handles=legend_patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png')
+        buf.seek(0)
+        rho_overlay_frames.append(imageio.imread(buf))
+        plt.close(fig)
+        
+# Save GIFs
 os.makedirs('./results/first_model', exist_ok=True)
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 imageio.mimsave(f'results/first_model/simulation_{timestamp}.gif', frames, fps=10)
+imageio.mimsave(f'results/first_model/simulation_rho_{timestamp}.gif', rho_overlay_frames, fps=10)
+#for k in range(Nrho):
+#    imageio.mimsave(f'results/rho_{k}_{timestamp}.gif', rho_frames[k], fps=10)
 
 plt.ioff()
