@@ -4,12 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.patches as mpatches
+from matplotlib.colors import LinearSegmentedColormap
 import imageio.v2 as imageio
 from IPython.display import Image
 from tqdm import tqdm
 from datetime import datetime
 
-
+### Issue:
+# This suggests the coupling between φ and ρ in your equations may not be correct. 
+# Right now you’re using u * dphi_dt, which allows ρ to decay very quickly whenever φ shrinks.
 
 ################ Parameters and variables ################
 Nrho = 8                     # number of phenotypes
@@ -30,7 +33,8 @@ frames = []
 rho_frames = [[] for _ in range(Nrho)]
 rho_overlay_frames = []
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-colors = cm.get_cmap('tab10', Nrho)(np.arange(Nrho))[:, :3]  # Nx3 RGB
+
+colors = cm.get_cmap('tab10', Nrho)(np.arange(Nrho))[:, :3] 
 
 
 ############# Initial conditions ###########
@@ -149,33 +153,36 @@ for t in tqdm(np.arange(0, tmax, dt)):
         """
 
         # Phenotyes (rho) overimposed
-        overlay = np.zeros((Lx, Ly, 3))
+        plot_vals = np.zeros_like(phi)          # medium = 0
 
-        for k in range(Nrho):
-            channel = u[:, :, k] / (u.max() + 1e-9)  
-            rgb = colors[k]                           
-            overlay += channel[..., None] * rgb       
+        # Only update tumor pixels
+        tumor_mask = phi > 0
+        plot_vals[tumor_mask] = np.max(u[tumor_mask, :], axis=1)
 
-        overlay = np.clip(overlay, 0, 1)
+        # Normalize tumor pixels
+        if plot_vals[tumor_mask].max() > 0:
+            plot_vals[tumor_mask] /= plot_vals[tumor_mask].max()
+
 
         fig, ax = plt.subplots()
-        ax.imshow(overlay, origin='lower')
+        colors = [(0, 'blue'), (0.000000001, 'yellow'), (1, 'red')]
+        cmap = LinearSegmentedColormap.from_list('tumor_cmap', colors)
+        c = ax.imshow(plot_vals, origin='lower', cmap=cmap, vmin=0, vmax=1)
+        fig.colorbar(c, ax=ax, label='Rho density')
         ax.set_title("Phenotype Overlay")
 
-        legend_patches = [mpatches.Patch(color=colors[k], label=f"rho_{k}") for k in range(Nrho)]
-        ax.legend(handles=legend_patches, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 
         buf = io.BytesIO()
-        fig.savefig(buf, format='png')
+        fig.savefig(buf, format= 'png')
         buf.seek(0)
         rho_overlay_frames.append(imageio.imread(buf))
         plt.close(fig)
         
 # Save GIFs
-os.makedirs('./results/first_model', exist_ok=True)
+os.makedirs('./results/v1', exist_ok=True)
 
-imageio.mimsave(f'results/first_model/simulation_{timestamp}.gif', frames, fps=10)
-imageio.mimsave(f'results/first_model/simulation_rho_{timestamp}.gif', rho_overlay_frames, fps=10)
+imageio.mimsave(f'results/v1/simulation_{timestamp}.gif', frames, fps=10)
+imageio.mimsave(f'results/v1/simulation_rho_{timestamp}.gif', rho_overlay_frames, fps=10)
 #for k in range(Nrho):
 #    imageio.mimsave(f'results/rho_{k}_{timestamp}.gif', rho_frames[k], fps=10)
 
