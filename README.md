@@ -8,7 +8,8 @@ This project is developed as final project for the subject Multiscale Mathematic
 
 ### Version 1
 
-The first version used the following equations
+The first version used the following equations:
+
 $$
 \frac{\partial \phi}{\partial t} = 
 -M \left( 
