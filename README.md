@@ -15,13 +15,13 @@ $$
 -M \left( 
 \frac{1}{2} (1-\phi) \phi (1-2\phi) + 
 \epsilon^2 \nabla^2 \phi + 
-\phi^2 (1-\phi) \int u p \, dp 
+\phi^2 (1-\phi) \int u\rho d\rho 
 \right)
 $$
 
 $$
 \frac{\partial u}{\partial t} = 
-\frac{\partial \phi}{\partial t} + D_\rho \nabla_\rho^2 u
+(\partial \phi t) + D_\rho \nabla_\rho^2 u
 $$
 
 The results obtained point at two possible issues:
