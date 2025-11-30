@@ -12,7 +12,7 @@ from datetime import datetime
 
 ### Issue:
 # This suggests the coupling between φ and ρ in your equations may not be correct. 
-# Right now you’re using u * dphi_dt, which allows ρ to decay very quickly whenever φ shrinks.
+# Right now we're using u * dphi_dt, which allows ρ to decay very quickly whenever φ shrinks.
 
 ################ Parameters and variables ################
 Nrho = 8                     # number of phenotypes
