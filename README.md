@@ -6,77 +6,13 @@ The objective is to create a model that accurately simulates tumoral growth taki
 
 This project is developed as final project for the subject Multiscale Mathematical Biology, part of the MsC computer science at Leiden University.
 
-### Version 1
+The first paper describes a model of tumor development that explores the behaviour (growth) of the tumor at different spatial concentrations of nutrients. They observe the tumors tend to develop non-spherical ('finger-like') shapes.
 
-The first version used the following equations:
+The second paper focuses on evolution and competition inside the tumor mass itself. It considers different phenotypes of tumor cells (more/less aggressive). The authors observe that the more aggressive types tend to move to the edges and displace the less aggressive types to the centre.
 
-$$
-\frac{\partial \phi}{\partial t} = 
--M \left( 
-\frac{1}{2} (1-\phi) \phi (1-2\phi) + 
-\epsilon^2 \nabla^2 \phi + 
-\phi^2 (1-\phi) \int u\rho d\rho 
-\right)
-$$
+Our project aims to combine the both. We model:
 
-$$
-\frac{\partial u}{\partial t} = 
-(\partial \phi t) + D_\rho \nabla_\rho^2 u
-$$
+- A tumor growing in a environment with changing levels of spatial nutrien concentration
+- Composed of different phenotypes (different levels of aggressiveness)
 
-The results obtained point at two possible issues:
-- Numerical instability: the Laplacian grows too fast into negative values, if the diffusion coefficient is too large it might be causing the numbers to explode
-- Possible wrong modeling of *du/dt*: When plotting the values of u in the lattice, we see most of them quickly evolve to 0, all across the lattice, except for a few localized pixels in the middle. The lattice reaches non-zero values (very close to 0) shortly before collapsing to 0, even in areas where there is no tumor cells present. This suggest a possible error in the definition of *du/dt*.
-
-
-### Version 2
-
-We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressive and high-aggressive) in a 2D tissue, coupled to nutrient availability. The goal is to capture how local nutrients and competition shape tumor expansion and phenotypic composition.
-
-**Key ideas implemented:**
-
-- **Tumor field (`phi`)**  
-  - Phase-field representation of tumor: `0 = medium`, `1 = tumor core`  
-  - Allen-Cahn dynamics + phenotype-weighted growth:
-    ```
-    dphi/dt = -M * [0.5*(1-phi)*phi*(1-2*phi) - div(epsilon * grad(phi))] + G * phi * (1-phi)
-    ```
-    $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon \nabla \phi) \Big] + G \, \phi (1-\phi)$$
-  - Interface width modulated by local tumor density:
-    ```
-    epsilon(x,y) = epsilon2 * (1 + alpha_eps * U_tot/K_U)
-    ```
-    $$\epsilon(x,y) = \epsilon_2 \left(1 + \alpha_\epsilon \frac{U_{\rm tot}}{K_U} \right)$$
-
-- **Phenotype dynamics (`u_k`)**  
-  - Two phenotypes: low-aggressive (k=0) and high-aggressive (k=1)  
-  - Diffusion + nutrient-limited logistic growth + death:
-    ```
-    du_k/dt = D_k * lap(u_k) + r_k * (c/(c+Kc)) * u_k * (1 - U_tot/K_U) - d_k * u_k
-    ```
-    $$\frac{\partial u_k}{\partial t} = D_k \nabla^2 u_k + r_k \frac{c}{c+K_c} u_k \left( 1 - \frac{U_{\rm tot}}{K_U} \right) - d_k u_k$$
-
-  - Competition for space is implicit in `(1 - U_tot/K_U)`
-
-- **Nutrients (`c`)**
-  - Diffusion, consumption by tumor, and relaxation to background:
-    ```
-    dc/dt = D_c * lap(c) - phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
-    ```
-    $$\frac{\partial c}{\partial t} = D_c \nabla^2 c - \phi \sum_k q_k u_k - \lambda_c (c - c_\infty)$$
-
-- **Initial conditions**  
-  - Tumor seeded as smooth circular core  
-  - Small random densities for each phenotype
-
-- **Visualization**
-  - Tumor field: `pcolor(phi)`  
-  - Phenotype overlay: pixel color = mixture of yellow (low-aggressive) + red (high-aggressive) proportional to local fractions
-
-
-### Version 3
-
-We added:
-- Visualization of nutrient availability
-- Gradient (asymmetrical) in nutrient distribution, to encourage protuberances in tumor growth
-- Implemented displacement due to competition between phenotypes
+We simulate the temporal and spatial evolution of the tumor, nutrients, and cell concentration per phenotype
