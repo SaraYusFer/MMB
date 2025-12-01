@@ -14,7 +14,7 @@ The second paper focuses on evolution and competition inside the tumor mass itse
 
 Our project aims to combine the both. We model:
 
-- A tumor growing in a environment with changing levels of spatial nutrien concentration
+- A tumor growing in a environment with changing levels of spatial nutrient concentration
 - Composed of different phenotypes (different levels of aggressiveness)
 
 We simulate the temporal and spatial evolution of the tumor, nutrients, and cell concentration per phenotype
