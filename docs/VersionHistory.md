@@ -24,6 +24,8 @@ The results obtained point at two possible issues:
 
 ### Version 2
 
+_We decided to take a step back and analyze what we were trying to achieve. We didn't fully grasp the intuition behind the proposed equations, so we decided to clarify the modeling objective._
+
 We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressive and high-aggressive) in a 2D tissue, coupled to nutrient availability. The goal is to capture how local nutrients and competition shape tumor expansion and phenotypic composition.
 
 **Key ideas implemented:**
@@ -70,6 +72,10 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
 #### Version 2.2
 
 We added:
+
 - Visualization of nutrient availability
 - Gradient (asymmetrical) in nutrient distribution, to encourage protuberances in tumor growth
 - Implemented displacement due to competition between phenotypes
+
+The tumor growth simulation seemed to make sense, but the nutrient gradient is not noticeable. For the next version we focus on exploring the equations proposed to gain intuition on parameter tuning.
+-> Additionally, we will analyze when numerical instabilities occur. For a large enough epsilon2 we get CA behaviour (class 4) on the simulation.
