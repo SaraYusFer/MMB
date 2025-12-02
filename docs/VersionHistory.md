@@ -65,10 +65,13 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
 - **Nutrients (`c`)**
   - Diffusion, consumption by tumor, and relaxation to background:
     ```
-    dc/dt = D_c * lap(c) - phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
+    dc/dt = D_c * lap(c) - gamma_c * phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
     ```
-    $$\frac{\partial c}{\partial t} = D_c \nabla^2 c - \phi \sum_k q_k u_k - \lambda_c (c - c_\infty)$$
-    - $$lambda_c$$: external replenishment
+    $$\frac{\partial c}{\partial t} = D_c \nabla^2 c - \gamma_c \phi \sum_k q_k u_k - \lambda_c (c - c_\infty)$$
+    - Uptake $$\gamma_c \phi \sum_k q_k u_k$$
+      - global nutrient consumption strength $$\gamma_c$$
+      - $$q_k$$: nutrient consumption rate per phenotype
+    - $$\lambda_c$$: external replenishment
 
 - **Initial conditions**  
   - Tumor seeded as smooth circular core  
