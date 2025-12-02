@@ -36,7 +36,7 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
     ```
     dphi/dt = -M * [0.5*(1-phi)*phi*(1-2*phi) - div(epsilon * grad(phi))] + G * phi * (1-phi)
     ```
-    $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon \nabla \phi) \Big] + G \, \phi (1-\phi)$$
+    $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon \nabla \phi) \Big] + G \phi (1-\phi)$$
   - Growth: 
      ```
     for k in range(Nrho):
