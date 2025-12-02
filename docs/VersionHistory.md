@@ -36,7 +36,9 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
     ```
     dphi/dt = -M * [0.5*(1-phi)*phi*(1-2*phi) - div(epsilon * grad(phi))] + G * phi * (1-phi)
     ```
-    $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon \nabla \phi) \Big] + G \phi (1-\phi)$$
+    $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon_{xy} \nabla \phi) \Big] + G \phi (1-\phi)$$
+    - We replace surface tension component to take into account variable interface width (previously $$\epsilon^2$$) with divergence discretization $$\nabla \cdot (\epsilon_{xy} \nabla \phi)$$ 
+    - $$\epsilon_{xy} = \epsilon^2 (1 + \alpha_\epsilon m)$$, where $$m$$ is normalized $$u$$
   - Growth: 
      ```
     for k in range(Nrho):
