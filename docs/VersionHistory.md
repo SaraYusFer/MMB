@@ -37,21 +37,30 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
     dphi/dt = -M * [0.5*(1-phi)*phi*(1-2*phi) - div(epsilon * grad(phi))] + G * phi * (1-phi)
     ```
     $$\frac{\partial \phi}{\partial t} = -M \Big[ \frac{1}{2}(1-\phi)\phi(1-2\phi) - \nabla \cdot (\epsilon \nabla \phi) \Big] + G \, \phi (1-\phi)$$
+  - Growth: 
+     ```
+    for k in range(Nrho):
+        G += r[k] * cons * (u[:, :, k] / U_tot)
+    ```
+    $$\sum_{k \in \rho} r_k \frac{c}{c+k_c} \frac{u_k}{u_tot}$$
+    - $$r_k$$: maximum proliferation rate
+    - $$k_c$$: half saturation rate
   - Interface width modulated by local tumor density:
     ```
-    epsilon(x,y) = epsilon2 * (1 + alpha_eps * U_tot/K_U)
+    epsilon(x,y) = epsilon2 * (1 + alpha_eps * U_tot/0.4)
     ```
-    $$\epsilon(x,y) = \epsilon_2 \left(1 + \alpha_\epsilon \frac{U_{\rm tot}}{K_U} \right)$$
+    $$\epsilon(x,y) = \epsilon_2 \left(1 + \alpha_\epsilon \frac{U_{\rm tot}}{m_n} \right)$$
 
 - **Phenotype dynamics (`u_k`)**  
   - Two phenotypes: low-aggressive (k=0) and high-aggressive (k=1)  
   - Diffusion + nutrient-limited logistic growth + death:
     ```
-    du_k/dt = D_k * lap(u_k) + r_k * (c/(c+Kc)) * u_k * (1 - U_tot/K_U) - d_k * u_k
+    du_k/dt = D_k * \nambda^2 u_k + r_k * (c/(c+Kc)) * u_k * (1 - U_tot/K_U) - d_k * u_k
     ```
     $$\frac{\partial u_k}{\partial t} = D_k \nabla^2 u_k + r_k \frac{c}{c+K_c} u_k \left( 1 - \frac{U_{\rm tot}}{K_U} \right) - d_k u_k$$
 
   - Competition for space is implicit in `(1 - U_tot/K_U)`
+  - death rate: `d_k`
 
 - **Nutrients (`c`)**
   - Diffusion, consumption by tumor, and relaxation to background:
@@ -59,6 +68,7 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
     dc/dt = D_c * lap(c) - phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
     ```
     $$\frac{\partial c}{\partial t} = D_c \nabla^2 c - \phi \sum_k q_k u_k - \lambda_c (c - c_\infty)$$
+    - $$lambda_c$$: external replenishment
 
 - **Initial conditions**  
   - Tumor seeded as smooth circular core  

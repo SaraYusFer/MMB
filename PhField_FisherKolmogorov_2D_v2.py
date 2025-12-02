@@ -107,8 +107,8 @@ for t in tqdm(np.arange(0, tmax, dt)):
     frac_aggr = np.nan_to_num(frac_aggr, 0.0)
 
     # compute epsilon2(x,y) from phenotype metric (use U_tot normalized)
-    # normalize U_tot to [0,1] by dividing by K_U
-    m = np.clip(U_tot / K_U, 0.0, 1.0)
+    # normalize U_tot to [0,1] by dividing by normalization constant
+    m = np.clip(U_tot / 0.4, 0.0, 1.0)
     epsilon2_xy = epsilon2 * (1.0 + alpha_eps * m)
     # clip to safe bounds
     epsilon2_xy = np.clip(epsilon2_xy, 0.1 * epsilon2, 3.0 * epsilon2)
@@ -148,8 +148,10 @@ for t in tqdm(np.arange(0, tmax, dt)):
     # Nutrient update: diffusion + consumption by tumor cells (localized by phi)
     # discrete laplacian for c
     c_lap = (c[sright, :] + c[sleft, :] + c[:, sup] + c[:, sdown] - 4.0 * c)
+    diffusion_c = D_c * c_lap
     uptake = gamma_c * (q[0] * u[:, :, 0] + q[1] * u[:, :, 1]) * phi
-    dc_dt = D_c * c_lap - uptake - lambda_c * (c - c_inf)
+    relaxation = lambda_c * (c - c_inf)
+    dc_dt = diffusion_c - uptake - relaxation
 
     # Phenotype updates: diffusion + nutrient-driven logistic growth
     lap_u = np.zeros_like(u)
