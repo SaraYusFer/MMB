@@ -253,10 +253,10 @@ for t in tqdm(np.arange(0, tmax, dt)):
         plt.close(fig)
 
 # Save GIFs
-os.makedirs('./results/v3', exist_ok=True)
+os.makedirs('./results/v2/v2_2', exist_ok=True)
 
-imageio.mimsave(f'results/v3/simulation_{timestamp}.gif', frames, fps=10)
-imageio.mimsave(f'results/v3/simulation_rho_{timestamp}.gif', rho_overlay_frames, fps=10)
-imageio.mimsave(f'results/v3/simulation_nutrients_{timestamp}.gif', nutrient_frames, fps=10)
+imageio.mimsave(f'results/v2/v2_2/simulation_{timestamp}.gif', frames, fps=10)
+imageio.mimsave(f'results/v2/v2_2/simulation_rho_{timestamp}.gif', rho_overlay_frames, fps=10)
+imageio.mimsave(f'results/v2/v2_2/simulation_nutrients_{timestamp}.gif', nutrient_frames, fps=10)
 
 plt.ioff()
