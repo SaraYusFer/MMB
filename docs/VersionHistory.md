@@ -42,9 +42,9 @@ We model **spatio-temporal growth of a tumor with two phenotypes** (low-aggressi
   - Growth: 
      ```
     for k in range(Nrho):
-        G += r[k] * cons * (u[:, :, k] / U_tot)
+        G += r[k] * cons * (u[:, :, k] / U_{tot})
     ```
-    $$\sum_{k \in \rho} r_k \frac{c}{c+k_c} \frac{u_k}{u_tot}$$
+    $$G = \sum_{k \in \rho} r_k \frac{c}{c+k_c} \frac{u_k}{u_{\rm tot}}$$
     - $$r_k$$: maximum proliferation rate
     - $$k_c$$: half saturation rate
   - Interface width modulated by local tumor density:
