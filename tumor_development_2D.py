@@ -3,7 +3,7 @@ Modeling tumor development under varying environmental and internal conditions.
 The following is the implementation of the model proposed as final project for the subject Multiscale Mathematical Biology at Leiden University.
 This project is developed by:
 Sara Yuste Fernandez Alonso, s4592239
-Juan Sebastian Melendez Granados, s4567894
+Juan Sebastian Melendez Granados, s4567846
 """
 import os
 import io
