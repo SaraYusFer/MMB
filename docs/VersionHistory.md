@@ -93,4 +93,19 @@ We added:
 - Implemented displacement due to competition between phenotypes
 
 The tumor growth simulation seemed to make sense, but the nutrient gradient is not noticeable. For the next version we focus on exploring the equations proposed to gain intuition on parameter tuning.
--> Additionally, we will analyze when numerical instabilities occur. For a large enough epsilon2 we get CA behaviour (class 4) on the simulation.
+--> Additionally, we will analyze when numerical instabilities occur. For a large enough epsilon2 we get CA behaviour (class 4) on the simulation.
+
+#### Version 3
+
+- Updated nutrient dynamics: added supply (from phase field model paper. Nutrients are only supplied outside of tumor.
+  ```
+    dc/dt = D_c * lap(c) + s (1-phi) - gamma_c * phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
+  ```
+  $$\frac{\partial c}{\partial t} = D_c \nabla^2 c + s (1-\phi) - \gamma_c \phi \sum_k q_k u_k - \lambda_c c$$
+    - s: supply rate (float)
+    - only supply nutrients outside of tumor (1-phi)
+ 
+- Initialized nutrients with a gradient instead of randomly
+- Adjusted parameters to increase asymmetrical growth effect
+     - Tumor now grows asymmetrically, aggressive phenotypes correctly displace less aggressive phenotypes (which stay near the core)
+     - Nutrients depleted around tumor. Future work should focus on more realistic starvation dynamics
