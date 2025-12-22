@@ -101,7 +101,7 @@ The tumor growth simulation seemed to make sense, but the nutrient gradient is n
   ```
     dc/dt = D_c * lap(c) + s (1-phi) - gamma_c * phi * sum(q_k * u_k) - lambda_c * (c - c_inf)
   ```
-  $$\frac{\partial c}{\partial t} = D_c \nabla^2 c + s (1-\phi) - \gamma_c \phi \sum_k q_k u_k - \lambda_c c$$
+  $$\frac{\partial c}{\partial t} = D_c \nabla^2 c + s (1-\phi) - \gamma_c \phi \sum_k q_k u_k - \lambda_c (c-c_\infty)$$
     - s: supply rate (float)
     - only supply nutrients outside of tumor (1-phi)
  
